@@ -1,7 +1,3 @@
-// Copyright (C) Pagoda Box, Inc - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-
 package router
 
 import (
@@ -91,7 +87,7 @@ func UpdateRoutes(newRoutes []Route) error {
 			if err == nil {
 				newRoutes[i].proxies = append(newRoutes[i].proxies, prox)
 			} else {
-				lumber.Error("[NANOBOX-ROUTER] Failed to update routes - %v", err)
+				lumber.Error("[MICROBOX-ROUTER] Failed to update routes - %v", err)
 				return err
 			}
 		}
@@ -100,7 +96,7 @@ func UpdateRoutes(newRoutes []Route) error {
 	routesMutex.Lock()
 	routes = newRoutes
 	routesMutex.Unlock()
-	lumber.Trace("[NANOBOX-ROUTER] Routes updated")
+	lumber.Trace("[MICROBOX-ROUTER] Routes updated")
 	return nil
 }
 
@@ -118,7 +114,7 @@ func (self *proxy) initProxy() error {
 		}
 		self.reverseProxy = NewSingleHostReverseProxy(uri, self.fwdPath, IgnoreUpstreamCerts, self.prefixPath)
 		self.healthy = true // assume newly added nodes are healthy
-		lumber.Trace("[NANOBOX-ROUTER] New proxy set")
+		lumber.Trace("[MICROBOX-ROUTER] New proxy set")
 	}
 	return nil
 }
@@ -206,7 +202,7 @@ func singleJoiningSlash(a, b string) string {
 // websocket proxying should not be done (other than maybe tcp proxy) lets make it happen
 
 // ServeWS is a combination of ReverseProxy.ServeHTTP from `net/http/httputil`
-// and piping logic from `nanopack/redundis`.  It doesn't exactly match rfc spec
+// and piping logic from `mu-box/redundis`.  It doesn't exactly match rfc spec
 // for html proxying, but since it's more an http connection turned bare tcp, I
 // don't feel bad.
 func ServeWS(rw http.ResponseWriter, req *http.Request, p *httputil.ReverseProxy) {
@@ -254,7 +250,7 @@ func ServeWS(rw http.ResponseWriter, req *http.Request, p *httputil.ReverseProxy
 	if err != nil {
 		rw.WriteHeader(502)
 		rw.Write([]byte("Failed to contact endpoint\n"))
-		lumber.Error("[NANOBOX-ROUTER] Error contacting endpoint '%s' - %v", outreq.URL.String(), err)
+		lumber.Error("[MICROBOX-ROUTER] Error contacting endpoint '%s' - %v", outreq.URL.String(), err)
 		return
 	}
 
@@ -263,7 +259,7 @@ func ServeWS(rw http.ResponseWriter, req *http.Request, p *httputil.ReverseProxy
 	if !ok {
 		rw.WriteHeader(500)
 		rw.Write([]byte("Invalid ResponseWriter\n"))
-		lumber.Error("[NANOBOX-ROUTER] Invalid ResponseWriter format")
+		lumber.Error("[MICROBOX-ROUTER] Invalid ResponseWriter format")
 		return
 	}
 
@@ -272,7 +268,7 @@ func ServeWS(rw http.ResponseWriter, req *http.Request, p *httputil.ReverseProxy
 	if err != nil {
 		rw.WriteHeader(500)
 		rw.Write([]byte("Failed to proxy\n"))
-		lumber.Error("[NANOBOX-ROUTER] Error hijacking request - %v", err)
+		lumber.Error("[MICROBOX-ROUTER] Error hijacking request - %v", err)
 		return
 	}
 
@@ -285,14 +281,14 @@ func ServeWS(rw http.ResponseWriter, req *http.Request, p *httputil.ReverseProxy
 	if err != nil {
 		rw.WriteHeader(500)
 		rw.Write([]byte("Failed to forward request\n"))
-		lumber.Error("[NANOBOX-ROUTER] Error forwarding request - %v", err)
+		lumber.Error("[MICROBOX-ROUTER] Error forwarding request - %v", err)
 		return
 	}
 
 	// for piping connection from user and connection to endpoint
 	pipe := func(writer, reader *net.Conn, label string) {
 		io.Copy(*writer, *reader)
-		lumber.Trace("[NANOBOX-ROUTER] %v hung up", label)
+		lumber.Trace("[MICROBOX-ROUTER] %v hung up", label)
 		// probably redundant, we get here because a failure to read in the io.Copy()
 		(*reader).Close()
 
@@ -305,8 +301,8 @@ func ServeWS(rw http.ResponseWriter, req *http.Request, p *httputil.ReverseProxy
 		*reader = nil
 	}
 
-	lumber.Trace("[NANOBOX-ROUTER] Piping user to endpoint...")
+	lumber.Trace("[MICROBOX-ROUTER] Piping user to endpoint...")
 	go pipe(&endpoint, &user, "User")
-	lumber.Trace("[NANOBOX-ROUTER] Piping endpoint to user...")
+	lumber.Trace("[MICROBOX-ROUTER] Piping endpoint to user...")
 	pipe(&user, &endpoint, "Endpoint")
 }

@@ -1,7 +1,3 @@
-// Copyright (C) Pagoda Box, Inc - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-
 package router
 
 import (
@@ -69,7 +65,9 @@ var defaultCert tls.Certificate
 
 // Start listening for secure connection.
 // The web server is split out from the much simpler form of
-//  http.ListenAndServeTLS(addr string, certFile string, keyFile string, handler Handler)
+//
+//	http.ListenAndServeTLS(addr string, certFile string, keyFile string, handler Handler)
+//
 // because we needed to handle multiple certs all at the same time and we needed
 // to be able to change the set of certs without restarting the server
 // this can be done by establishing a tls listener seperate form the http Server.
@@ -138,7 +136,7 @@ func UpdateCerts(newKeys []KeyPair) error {
 		if err == nil {
 			newCerts = append(newCerts, cert)
 		} else {
-			lumber.Error("[NANOBOX-ROUTER] Failed to update certs - %s", err.Error())
+			lumber.Error("[MICROBOX-ROUTER] Failed to update certs - %s", err.Error())
 			return err
 		}
 	}
@@ -161,7 +159,7 @@ func UpdateCerts(newKeys []KeyPair) error {
 		cfgCerts.BuildNameToCertificate()
 	}
 	certMutex.Unlock()
-	lumber.Debug("[NANOBOX-ROUTER] Certs updated")
+	lumber.Debug("[MICROBOX-ROUTER] Certs updated")
 	return nil
 }
 

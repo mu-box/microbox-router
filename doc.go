@@ -1,10 +1,6 @@
-// Copyright (C) Pagoda Box, Inc - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-
 // Package router is a client for creating/maintaining http(s) proxies.
 //
-// Certificates
+// # Certificates
 //
 // Certificates are stored as a KeyPair which contains the key and certificate.
 // A tls.Certificate is created and stored separately and used for serving https
@@ -15,18 +11,17 @@
 //
 // Start secure routing as follows:
 //
-//  StartTLS("0.0.0.0:443")
+//	StartTLS("0.0.0.0:443")
 //
 // Set certificates as follows:
 //
-//  UpdateCerts([]KeyPair{KeyPair{Key: "abcd123", Cert: "1234abc"}})
+//	UpdateCerts([]KeyPair{KeyPair{Key: "abcd123", Cert: "1234abc"}})
 //
 // Get certificates (key/cert pairs) as follows:
 //
-//  keys := Keys()
+//	keys := Keys()
 //
-//
-// Routes
+// # Routes
 //
 // Routes have 2 implicit parts: matching criteria and action definitions. The
 // matching portion includes subdomain, domain, and path. The matching algorighm
@@ -46,79 +41,80 @@
 //
 // Start routing as follows:
 //
-//  StartHTTP("0.0.0.0:80")
+//	StartHTTP("0.0.0.0:80")
 //
 // Set routes as follows:
 //
-//  UpdateRoutes([]Route{Route{Domain: "test.com", Page: "Hello World!\n"}})
+//	UpdateRoutes([]Route{Route{Domain: "test.com", Page: "Hello World!\n"}})
 //
 // Get registered routes as follows:
 //
-//  routes := Routes()
+//	routes := Routes()
 //
-//
-// Matching Scenarios
+// # Matching Scenarios
 //
 // Requests will always match the route with the longest path defined.
 //
-//  ROUTES
-//    SUB   DOMAIN    PATH   PAGE
-//    ""    test.com  /      "test"
-//    ""    test.com  /admin "admin"
+//	ROUTES
+//	  SUB   DOMAIN    PATH   PAGE
+//	  ""    test.com  /      "test"
+//	  ""    test.com  /admin "admin"
 //
-//  CURL
-//    REQUEST            RESPONSE
-//    test.com/admin     "admin"
-//    test.com/admin/me  "admin"
-//    admin.test.com     "test"
-//    test.com/admins    "test"
+//	CURL
+//	  REQUEST            RESPONSE
+//	  test.com/admin     "admin"
+//	  test.com/admin/me  "admin"
+//	  admin.test.com     "test"
+//	  test.com/admins    "test"
 //
 // A path can include a "*" at the end to match similar requests.
 //
-//  ROUTES
-//    SUB   DOMAIN    PATH   PAGE
-//    ""    test.com  /      "test"
-//    ""    test.com  /a*    "a is for apple"
-//    ""    test.com  /b/    "b things"
+//	ROUTES
+//	  SUB   DOMAIN    PATH   PAGE
+//	  ""    test.com  /      "test"
+//	  ""    test.com  /a*    "a is for apple"
+//	  ""    test.com  /b/    "b things"
 //
-//  CURL
-//    REQUEST            RESPONSE
-//    test.com/a         "a is for apple"
-//    test.com/ant       "a is for apple"
-//    test.com/ant/man   "a is for apple"
-//    test.com/b         "test"
-//    test.com/b/bear    "b things"
+//	CURL
+//	  REQUEST            RESPONSE
+//	  test.com/a         "a is for apple"
+//	  test.com/ant       "a is for apple"
+//	  test.com/ant/man   "a is for apple"
+//	  test.com/b         "test"
+//	  test.com/b/bear    "b things"
 //
 // A subdomain match takes precedence over a domain/path match.
 //
-//  ROUTES
-//    SUB   DOMAIN    PATH   PAGE
-//    admin test.com  /      "admin"
-//    ""    test.com  /bill  "Buffalo Bill"
+//	ROUTES
+//	  SUB   DOMAIN    PATH   PAGE
+//	  admin test.com  /      "admin"
+//	  ""    test.com  /bill  "Buffalo Bill"
 //
-//  CURL
-//    REQUEST              RESPONSE
-//    admin.test.com/bill  "admin"
-//    users.test.com/bill  "Buffalo Bill"
+//	CURL
+//	  REQUEST              RESPONSE
+//	  admin.test.com/bill  "admin"
+//	  users.test.com/bill  "Buffalo Bill"
 //
 // If a Route's matcher has a subdomain only, then all requests with that
 // particular subdomain will have the Route's defined action applied.
 //
-//  ROUTES
-//    SUB   DOMAIN    PATH  PAGE
-//    admin ""        /     "admin"
-//    ""    test1.com /     "test1"
+//	ROUTES
+//	  SUB   DOMAIN    PATH  PAGE
+//	  admin ""        /     "admin"
+//	  ""    test1.com /     "test1"
 //
-//  CURL
-//    REQUEST            RESPONSE
-//    admin.test1.com    "admin"
-//    admin.test2.com    "admin"
+//	CURL
+//	  REQUEST            RESPONSE
+//	  admin.test1.com    "admin"
+//	  admin.test2.com    "admin"
 //
-// Logging
+// # Logging
 //
-// In order to view logs embedded within nanobox-router, you must:
-//  import "github.com/jcelliott/lumber"
+// In order to view logs embedded within microbox-router, you must:
+//
+//	import "github.com/jcelliott/lumber"
+//
 // and set the level of logging desired (see lumber docs for more info)
-//  lumber.Level(lumber.LvlInt("INFO"))
 //
-package router // import "github.com/nanobox-io/nanobox-router"
+//	lumber.Level(lumber.LvlInt("INFO"))
+package router // import "github.com/mu-box/microbox-router"

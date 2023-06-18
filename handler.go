@@ -1,7 +1,3 @@
-// Copyright (C) Pagoda Box, Inc - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-
 package router
 
 import (
@@ -34,12 +30,12 @@ var host string
 // respond with a 502 - NoRoutes error.
 func (self handler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if ErrorHandler != nil {
-		lumber.Trace("[NANOBOX-ROUTER] Serving ErrorHandler")
+		lumber.Trace("[MICROBOX-ROUTER] Serving ErrorHandler")
 		ErrorHandler.ServeHTTP(rw, req)
 		return
 	}
 	if self.https {
-		lumber.Trace("[NANOBOX-ROUTER] Setting X-Forwarded-Proto")
+		lumber.Trace("[MICROBOX-ROUTER] Setting X-Forwarded-Proto")
 		req.Header.Set("X-Forwarded-Proto", "https")
 	} else {
 		req.Header.Set("X-Forwarded-Proto", "http")
@@ -48,11 +44,11 @@ func (self handler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	host = string(re.ReplaceAll([]byte(req.Host), nil))
 
 	// find match
-	lumber.Trace("[NANOBOX-ROUTER] URL-----%+q", req.URL)
+	lumber.Trace("[MICROBOX-ROUTER] URL-----%+q", req.URL)
 	route := bestMatch(host, req.URL.Path)
-	// lumber.Trace("[NANOBOX-ROUTER] Request Headers: '%+q'", req.Header)
+	// lumber.Trace("[MICROBOX-ROUTER] Request Headers: '%+q'", req.Header)
 	if route != nil {
-		lumber.Trace("[NANOBOX-ROUTER] Route chosen: '%+q'", route)
+		lumber.Trace("[MICROBOX-ROUTER] Route chosen: '%+q'", route)
 
 		// serve page
 		if route.Page != "" {
@@ -84,7 +80,7 @@ func (self handler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 		// todo: maybe? or just check target's scheme
 		if strings.ToLower(req.Header.Get("Upgrade")) == "websocket" {
-			lumber.Trace("[NANOBOX-ROUTER] Websocket detected...")
+			lumber.Trace("[MICROBOX-ROUTER] Websocket detected...")
 			ServeWS(rw, req, thisProxy.reverseProxy)
 		} else {
 			thisProxy.reverseProxy.ServeHTTP(rw, req)
@@ -93,7 +89,7 @@ func (self handler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	// no registered route matches the request (routes too specific)
-	lumber.Debug("[NANOBOX-ROUTER] Unsure where to route!")
+	lumber.Debug("[MICROBOX-ROUTER] Unsure where to route!")
 	NoRoutes{}.ServeHTTP(rw, req)
 }
 
@@ -103,12 +99,12 @@ func (self handler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 // in a recursive manor until a match is or isn't found. Path matches are scored
 // so the route with the longest matching path is chosen.
 func bestMatch(host, path string) (route *Route) {
-	lumber.Trace("[NANOBOX-ROUTER] Checking Request: '%v'...", host+path)
+	lumber.Trace("[MICROBOX-ROUTER] Checking Request: '%v'...", host+path)
 	matchScore := 0
 
 	routesMutex.RLock()
 	for i := range routes {
-		lumber.Trace("[NANOBOX-ROUTER] Checking Route: '%v'", routes[i].SubDomain+"."+routes[i].Domain+routes[i].Path)
+		lumber.Trace("[MICROBOX-ROUTER] Checking Route: '%v'", routes[i].SubDomain+"."+routes[i].Domain+routes[i].Path)
 		if subdomainMatch(host, routes[i]) && domainMatch(host, routes[i]) && pathMatch(path, routes[i]) {
 			// Assign a temporary score to check against current matchscore for
 			// proper routing. We add length of all parts to get a more exact match
@@ -129,12 +125,12 @@ func bestMatch(host, path string) (route *Route) {
 			}
 
 			tempScore := len(routes[i].Path) + len(routes[i].SubDomain) + len(routes[i].Domain) + bonus
-			lumber.Trace("[NANOBOX-ROUTER] tempScore: '%v'", tempScore)
+			lumber.Trace("[MICROBOX-ROUTER] tempScore: '%v'", tempScore)
 
 			if tempScore > matchScore {
 				matchScore = tempScore
 				route = &routes[i]
-				lumber.Trace("[NANOBOX-ROUTER] Matchscore: '%v'", matchScore)
+				lumber.Trace("[MICROBOX-ROUTER] Matchscore: '%v'", matchScore)
 			}
 		}
 	}
@@ -146,7 +142,7 @@ func bestMatch(host, path string) (route *Route) {
 		if len(hostParts) <= 2 {
 			return nil
 		}
-		lumber.Trace("[NANOBOX-ROUTER] Stripping subdomain: '%v'", hostParts[0])
+		lumber.Trace("[MICROBOX-ROUTER] Stripping subdomain: '%v'", hostParts[0])
 		// strip a subdomain and try matching again
 		return bestMatch(strings.Join(hostParts[1:], "."), path)
 	}
@@ -165,11 +161,11 @@ func subdomainMatch(requestHost string, r Route) bool {
 	hostBits := strings.Split(requestHost, ".")
 	if len(hostBits) > 2 {
 		subdomain = strings.Join(hostBits[:len(hostBits)-2], ".")
-		lumber.Trace("[NANOBOX-ROUTER] Subdomain: '%s'", subdomain)
+		lumber.Trace("[MICROBOX-ROUTER] Subdomain: '%s'", subdomain)
 	}
 
 	match := strings.HasPrefix(subdomain, r.SubDomain)
-	lumber.Trace("[NANOBOX-ROUTER] Subdomain match? '%t'", match)
+	lumber.Trace("[MICROBOX-ROUTER] Subdomain match? '%t'", match)
 	return match
 }
 
@@ -183,10 +179,10 @@ func domainMatch(requestHost string, r Route) bool {
 	hostBits := strings.Split(requestHost, ".")
 	if len(hostBits) >= 2 {
 		domain = strings.Join(hostBits[len(hostBits)-2:], ".")
-		lumber.Trace("[NANOBOX-ROUTER] Domain: '%s'", domain)
+		lumber.Trace("[MICROBOX-ROUTER] Domain: '%s'", domain)
 	}
 	match := domain == r.Domain
-	lumber.Trace("[NANOBOX-ROUTER] Domain match? '%t'", match)
+	lumber.Trace("[MICROBOX-ROUTER] Domain match? '%t'", match)
 	return match
 }
 
@@ -208,6 +204,6 @@ func pathMatch(requestPath string, r Route) bool {
 		// check for exact match or exact match + "/"
 		match = (r.Path == requestPath) || strings.HasPrefix(requestPath, r.Path+"/")
 	}
-	lumber.Trace("[NANOBOX-ROUTER] Path match: '%t'", match)
+	lumber.Trace("[MICROBOX-ROUTER] Path match: '%t'", match)
 	return match
 }

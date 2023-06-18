@@ -14,10 +14,10 @@ import (
 	"github.com/jcelliott/lumber"
 	"golang.org/x/net/websocket"
 
-	"github.com/nanobox-io/nanobox-router"
+	"github.com/mu-box/microbox-router"
 )
 
-// nanobox-router.test SSC
+// microbox-router.test SSC
 var key = "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDDboW1FcXq8rJX\nDwGZ2+solI9YR73/uqG0tp2WzPIMUSQY1FbvD9GO8wSToWdnDHW9M15eiLrk1TAn\nuo99phAovlw5RAsv5vopCf13MKVuWXaSwp6bB52qqLnr5SI2wtJBe5/+LzqUNq5/\nnfsUH0dEBc6hOOUeQPVcd8zAQJblKzg5O90wplqy5Iki4xfGrcF2paB8D4I91X7e\n+JRRVZA79zSzZ4x/opV/fsyL5tfRxoCNn9wnDH2KPR2k/e+A4Tw1fo6TisH4scSp\nMRLjf4Xg7+M72E7SDQ3/5+9d5egynzjT2LjHty8Le5J4fV42jtCQrB/PGys1B8Cx\npNtjo1gvAgMBAAECggEAXFZ7HF1mPyVeuB2h/wVWrbzLocV78zlGMDFcciTxdHpe\nGNEzJg8OT4FpNyu6xIixlKyRuQ7XZ0mHUC4ooBB3cBjJUFFjC8YRipRqywcUEvh4\nOs1zzQIjL8A64EdKDB+u4ju8E4hTIDZZ6nhFanOA45Xu1GQidVHx3DfKaUfbQ/l9\nX+AesqN+fpQBsxfKvYPtaKH8OMjcpLmlSns96r7IY5GQQv1Egy4M1W+Urljgcqim\nFblFOOIFD65nTLsGz6VhENc7gF/ueIv2hrlMYvSQQIM9IdrzGfCYLWzDhzY1x9r3\nvh9Erqn0rub0Rap5Wi7gdM8KIqJEjzp0mYvv2j9hmQKBgQDgLFkIE5j2AQn4S4+n\nFP9GHwgzrFuYOe9FAuoeIeVwcb6eNU6B2ptL3PJ/Pbd1dHcmef9pXUa2cpMo682D\ndQOc1h4kl9mNIvxVIj9Vu6fW0PrOBavGyJLsas0iKxiwzzF9bMt9aqcDphu/hfbB\nnXk70eRG9rUdn6EmvkbtEzSBbQKBgQDfLY4DMq2hhpHeRdLsxMYT3OPyeOcV9boD\nB3bVkxy61XTzFTaVyh6gWx9gxpY9mmv5yH96e93rQaqs5ScIuXrBTvSBTOyRTTw1\nzoZeiH0jN/nMV4x7sdhcrXo7hu7OjqcWGFzMiAYH44E277mrx56dvAgigrIJgPBY\njjX6w2waiwKBgDEwCekHw8xWtgVRLxgON2T/ciFEdGSWcbXGyfAKp/lgO98i+zLq\n8KBYvqzEsfiHsY0zv6My4E0wHrIf61wo1L4ZDUwiNY4OWyei+BqrrkwoVp/WBrb7\nU6GkXZZdtnE1RTqsIIpIWJUoYXZIwrgBAZTqnRglEeCKIiYKIi3qxN6RAoGBAKxX\nsG/1xbGTirdbsjtW5SNXk8ud483IeUF3lSPuu+PnjK1et01KzQXF+GAyWrjts+4r\nD45VcxUGG7fyKYeKPCplP1lOPu0h+JoQhyEfQ4tb4ZIUFY870joXWOn5FBb8gDkG\nzTrA2+9hl1oGG5p0x59FIf8McFH4eSHZiAPCv4trAoGBANw+K8+qmVCLOIpGGYqd\nRl2c2V35Qf17bXlLhv+fEliCI6ixp1fLfglE0IXcGtnSnnUH2cWpC5dlythEfyPH\nAfnZHDvuJ6K0uDgDq90EmwKyHQxihUF57D6oR6FZ3MPqmj41umeQyxC/HGtJm6po\na1Zn/gvZVeitHeVAeDJfJ/J8\n-----END PRIVATE KEY-----"
 var cert = "-----BEGIN CERTIFICATE-----\nMIIDbTCCAlWgAwIBAgIJAM/PXFTYkPDoMA0GCSqGSIb3DQEBCwUAME0xCzAJBgNV\nBAYTAlVTMQswCQYDVQQIDAJJRDETMBEGA1UECgwKbmFub2JveC5pbzEcMBoGA1UE\nAwwTbmFub2JveC1yb3V0ZXIudGVzdDAeFw0xNjAzMjIxODQyMTJaFw0xNzAzMjIx\nODQyMTJaME0xCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJJRDETMBEGA1UECgwKbmFu\nb2JveC5pbzEcMBoGA1UEAwwTbmFub2JveC1yb3V0ZXIudGVzdDCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAMNuhbUVxeryslcPAZnb6yiUj1hHvf+6obS2\nnZbM8gxRJBjUVu8P0Y7zBJOhZ2cMdb0zXl6IuuTVMCe6j32mECi+XDlECy/m+ikJ\n/XcwpW5ZdpLCnpsHnaqouevlIjbC0kF7n/4vOpQ2rn+d+xQfR0QFzqE45R5A9Vx3\nzMBAluUrODk73TCmWrLkiSLjF8atwXaloHwPgj3Vft74lFFVkDv3NLNnjH+ilX9+\nzIvm19HGgI2f3CcMfYo9HaT974DhPDV+jpOKwfixxKkxEuN/heDv4zvYTtINDf/n\n713l6DKfONPYuMe3Lwt7knh9XjaO0JCsH88bKzUHwLGk22OjWC8CAwEAAaNQME4w\nHQYDVR0OBBYEFMRZye+7JAUv7l/44AVnocivjzJ7MB8GA1UdIwQYMBaAFMRZye+7\nJAUv7l/44AVnocivjzJ7MAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEB\nAH2ygiWZs8pRYWQy6PKj3arci4diFkBiISGTFoAeE1tYkZVE6fM5acPaOV1z7/Fr\nSKeiRhlC7sfcRURaDPDy0of5V83PazQqs3+SNV4KR+O2PNZk6DalKmtwOlNHRKkJ\n5s79rWgqY1wEt4s5atIwVEgdg7WRz41V7WK5Q9IMkFqYVn8MHVKd0k3nuA9ksfXA\nQPBypyOEJGx7EML6Tena/YerpTmcw2Xt4ssxiZQIn/wP3dyqISGark8BNWK6y7iG\nWkt2VZCvKXhb5Q+s4IlxA58InR1b+8/NauYyL1bUgcc3LBHN5Ty6nMUUeb2WPQ32\n4qod6vx2rJfj718EYjrWdaI=\n-----END CERTIFICATE-----"
 var fakeListen = "127.0.0.1:8088"
@@ -57,11 +57,11 @@ func TestMain(m *testing.M) {
 func TestRoutes(t *testing.T) {
 
 	// test bad routes
-	routes := []router.Route{router.Route{Domain: "http://nanobox-router.test", Targets: []string{"!@#$%^&"}}}
+	routes := []router.Route{router.Route{Domain: "http://microbox-router.test", Targets: []string{"!@#$%^&"}}}
 	router.UpdateRoutes(routes)
 
 	// configure a route
-	routes = []router.Route{router.Route{Domain: "nanobox-router.test", Targets: []string{"http://" + fakeListen}}}
+	routes = []router.Route{router.Route{Domain: "microbox-router.test", Targets: []string{"http://" + fakeListen}}}
 
 	// update the routes
 	router.UpdateRoutes(routes)
@@ -69,7 +69,7 @@ func TestRoutes(t *testing.T) {
 	// get routes
 	savedRoutes := router.Routes()
 
-	if len(savedRoutes) != 1 || savedRoutes[0].Domain != "nanobox-router.test" {
+	if len(savedRoutes) != 1 || savedRoutes[0].Domain != "microbox-router.test" {
 		t.Errorf("Failed to update routes - %v", savedRoutes)
 		t.FailNow()
 	}
@@ -81,7 +81,7 @@ func TestRoutes(t *testing.T) {
 		t.FailNow()
 	}
 	// set Host
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	// don't block on this request so we can process the chan
 	go client.Do(req)
 
@@ -99,7 +99,7 @@ func TestRoutes(t *testing.T) {
 // ensures KeyPair(cert) management works
 func TestTls(t *testing.T) {
 	// configure routes
-	routes := []router.Route{router.Route{Domain: "nanobox-router.test", Targets: []string{"http://" + fakeListen}}}
+	routes := []router.Route{router.Route{Domain: "microbox-router.test", Targets: []string{"http://" + fakeListen}}}
 	router.UpdateRoutes(routes)
 
 	// test bad certs
@@ -133,7 +133,7 @@ func TestTls(t *testing.T) {
 		t.FailNow()
 	}
 	// set Host
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	// don't need to verify cert (self-signed)
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	// don't block on this request so we can process the chan
@@ -152,19 +152,19 @@ func TestTls(t *testing.T) {
 func TestHandler(t *testing.T) {
 	// configure routes
 	routes := []router.Route{
-		router.Route{Domain: "nanobox-router.test", Page: "route-a"},
+		router.Route{Domain: "microbox-router.test", Page: "route-a"},
 		router.Route{SubDomain: "b", Path: "/b*", Page: "route-b"},
-		router.Route{Domain: "nanobox-router.test", Path: "/c/", Page: "route-c"},
-		router.Route{Domain: "nanobox-router.test", Path: "/d", Page: "route-d"},
-		router.Route{Domain: "nanobox-router.test", Path: "/e*", Page: "route-e"},
-		router.Route{Domain: "nanobox.test", Path: "/f", Page: "route-f"},
+		router.Route{Domain: "microbox-router.test", Path: "/c/", Page: "route-c"},
+		router.Route{Domain: "microbox-router.test", Path: "/d", Page: "route-d"},
+		router.Route{Domain: "microbox-router.test", Path: "/e*", Page: "route-e"},
+		router.Route{Domain: "microbox.test", Path: "/f", Page: "route-f"},
 		router.Route{SubDomain: "f", Path: "/f", Page: "subdomain-f"},
-		router.Route{Domain: "nanobox-router.test", Path: "/g", FwdPath: "/great-app", Targets: []string{"http://" + fakeListen}},
-		router.Route{Domain: "nanobox-router.test", Path: "/h", Targets: []string{"http://" + fakeListen + "?app=mine"}},
-		router.Route{Domain: "nanobox-router.test", Path: "/i"},
-		router.Route{Domain: "nano-j.test", Path: "/j", Page: "domain-j"},
+		router.Route{Domain: "microbox-router.test", Path: "/g", FwdPath: "/great-app", Targets: []string{"http://" + fakeListen}},
+		router.Route{Domain: "microbox-router.test", Path: "/h", Targets: []string{"http://" + fakeListen + "?app=mine"}},
+		router.Route{Domain: "microbox-router.test", Path: "/i"},
+		router.Route{Domain: "micro-j.test", Path: "/j", Page: "domain-j"},
 		router.Route{SubDomain: "j", Path: "/j", Page: "subdomain-j"},
-		router.Route{Domain: "nano-k.test", Page: "domain-k"},
+		router.Route{Domain: "micro-k.test", Page: "domain-k"},
 		router.Route{Path: "/k", Page: "path-k"},
 	}
 	router.UpdateRoutes(routes)
@@ -203,7 +203,7 @@ func TestHandler(t *testing.T) {
 	}
 	// test "route-a"
 	req := newReq("")
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	resp := getIt(req)
 	if resp != "route-a" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -211,7 +211,7 @@ func TestHandler(t *testing.T) {
 
 	// test bad "route-b"
 	req = newReq("")
-	req.Host = "b.nanobox-router.test"
+	req.Host = "b.microbox-router.test"
 	resp = getIt(req)
 	if resp != "route-a" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -219,7 +219,7 @@ func TestHandler(t *testing.T) {
 
 	// test "route-b"
 	req = newReq("/b/")
-	req.Host = "b.nanobox-router.test"
+	req.Host = "b.microbox-router.test"
 	resp = getIt(req)
 	if resp != "route-b" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -227,7 +227,7 @@ func TestHandler(t *testing.T) {
 
 	// test bad "route-c"
 	req = newReq("/cat")
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	resp = getIt(req)
 	if resp != "route-a" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -235,7 +235,7 @@ func TestHandler(t *testing.T) {
 
 	// test "route-c"
 	req = newReq("/c/")
-	req.Host = "b.nanobox-router.test"
+	req.Host = "b.microbox-router.test"
 	resp = getIt(req)
 	if resp != "route-c" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -243,7 +243,7 @@ func TestHandler(t *testing.T) {
 
 	// test bad "route-d"
 	req = newReq("/dog")
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	resp = getIt(req)
 	if resp != "route-a" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -251,7 +251,7 @@ func TestHandler(t *testing.T) {
 
 	// test "route-d"
 	req = newReq("/d")
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	resp = getIt(req)
 	if resp != "route-d" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -259,7 +259,7 @@ func TestHandler(t *testing.T) {
 
 	// test "route-e"
 	req = newReq("/elephant")
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	resp = getIt(req)
 	if resp != "route-e" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -267,7 +267,7 @@ func TestHandler(t *testing.T) {
 
 	// test "route-e"
 	req = newReq("/e/a/b/dog")
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	resp = getIt(req)
 	if resp != "route-e" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -275,7 +275,7 @@ func TestHandler(t *testing.T) {
 
 	// test bad "route-f"
 	req = newReq("/")
-	req.Host = "nanobox.test"
+	req.Host = "microbox.test"
 	resp = getIt(req)
 	if resp != "NoRoutes\n" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -283,7 +283,7 @@ func TestHandler(t *testing.T) {
 
 	// test "route-f"
 	req = newReq("/f")
-	req.Host = "nanobox.test"
+	req.Host = "microbox.test"
 	resp = getIt(req)
 	if resp != "route-f" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -291,7 +291,7 @@ func TestHandler(t *testing.T) {
 
 	// test "subdomain-f"
 	req = newReq("/f")
-	req.Host = "f.nanobox.test"
+	req.Host = "f.microbox.test"
 	resp = getIt(req)
 	if resp != "subdomain-f" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -299,25 +299,25 @@ func TestHandler(t *testing.T) {
 
 	// test "route-g"
 	req = newReq("/g")
-	req.Host = "admin.nanobox-router.test"
+	req.Host = "admin.microbox-router.test"
 	go getIt(req)
 	<-headers
 
 	// test "route-g"
 	req = newReq("/g")
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	go getIt(req)
 	<-headers
 
 	// test "route-h"
 	req = newReq("/h?id=1")
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	go getIt(req)
 	<-headers
 
 	// test bad "route-i"
 	req = newReq("/i")
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 	resp = getIt(req)
 	if resp != "NoRoutes\n" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -325,7 +325,7 @@ func TestHandler(t *testing.T) {
 
 	// test "domain-j"
 	req = newReq("/j")
-	req.Host = "nano-j.test"
+	req.Host = "micro-j.test"
 	resp = getIt(req)
 	if resp != "domain-j" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -333,7 +333,7 @@ func TestHandler(t *testing.T) {
 
 	// test "subdomain-j"
 	req = newReq("/j")
-	req.Host = "j.nano-j.test"
+	req.Host = "j.micro-j.test"
 	resp = getIt(req)
 	if resp != "subdomain-j" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -341,7 +341,7 @@ func TestHandler(t *testing.T) {
 
 	// test "domain-k"
 	req = newReq("/k")
-	req.Host = "nano-k.test"
+	req.Host = "micro-k.test"
 	resp = getIt(req)
 	// domain wins over paths only, if path-k is desired for this request
 	// add another route {Domain: "domain-k", Path: "/k", Page: "path-k"}
@@ -351,7 +351,7 @@ func TestHandler(t *testing.T) {
 
 	// test "path-k"
 	req = newReq("/k")
-	req.Host = "nano-j.test"
+	req.Host = "micro-j.test"
 	resp = getIt(req)
 	if resp != "path-k" {
 		t.Errorf("%q doesn't match expected out", resp)
@@ -380,7 +380,7 @@ func TestDepProxy(t *testing.T) {
 		t.FailNow()
 	}
 	// set Host
-	req.Host = "nanobox-router.test"
+	req.Host = "microbox-router.test"
 
 	go func() {
 		_, err = client.Do(req)
@@ -467,7 +467,7 @@ func startFakeWeb() error {
 
 func ExampleRoutes() {
 	// configure a route
-	routes := []router.Route{router.Route{Domain: "nanobox-router.test", Targets: []string{"http://127.0.0.1:8088"}}}
+	routes := []router.Route{router.Route{Domain: "microbox-router.test", Targets: []string{"http://127.0.0.1:8088"}}}
 
 	// update the routes
 	router.UpdateRoutes(routes)
@@ -479,7 +479,7 @@ func ExampleRoutes() {
 	}
 	fmt.Printf("%v\n", savedRoutes[0].Domain)
 	// Output:
-	// nanobox-router.test
+	// microbox-router.test
 }
 
 func ExampleKeys() {

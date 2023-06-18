@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/nanobox-io/nanobox-router.svg)](https://travis-ci.org/nanobox-io/nanobox-router)
-[![GoDoc](https://godoc.org/github.com/nanobox-io/nanobox-router?status.svg)](https://godoc.org/github.com/nanobox-io/nanobox-router)
+[![Build Status](https://github.com/mu-box/microbox-router/actions/workflows/ci.yaml/badge.svg)](https://github.com/mu-box/microbox-router/actions)
+[![GoDoc](https://godoc.org/github.com/mu-box/microbox-router?status.svg)](https://godoc.org/github.com/mu-box/microbox-router)
 
-# nanobox-router
+# microbox-router
 Simple client for creating and updating custom defined http[s] and ws[s] proxies/ssl-termination without restarting a server application.
 
 ## Status
@@ -18,7 +18,7 @@ import (
   "time"
   "os"
 
-  "github.com/nanobox-io/nanobox-router"
+  "github.com/mu-box/microbox-router"
 )
 
 func main() {
@@ -43,7 +43,7 @@ Test it
 $ curl -H 'Host: test.com' 127.0.0.1:8888
 World, Hello!
 ```
-Congratulations proxymaster! Be sure to check out the [godocs](https://godoc.org/github.com/nanobox-io/nanobox-router) to enhance your app's functionality.
+Congratulations proxymaster! Be sure to check out the [godocs](https://godoc.org/github.com/mu-box/microbox-router) to enhance your app's functionality.
 
 ## Data types:
 #### Route:
@@ -93,7 +93,7 @@ KeyPair{
 
 ## Contributing
 
-Contributions to the nanobox-router project are welcome and encouraged. Contributions should follow the [Nanobox Contribution Process & Guidelines](https://docs.nanobox.io/contributing/).
+Contributions to the microbox-router project are welcome and encouraged. Contributions should follow the [Microbox Contribution Process & Guidelines](https://docs.microbox.cloud/contributing/).
 
 ## Todo
 
@@ -101,6 +101,6 @@ Contributions to the nanobox-router project are welcome and encouraged. Contribu
 
 ## Licence
 
-Mozilla Public License Version 2.0
+This project is released under [The MIT License](http://opensource.org/licenses/MIT).
 
-[![open source](http://nano-assets.gopagoda.io/open-src/nanobox-open-src.png)](http://nanobox.io/open-source)
+[![open source](http://microbox.rocks/assets/open-src/microbox-open-src.png)](http://microbox.cloud/open-source)
